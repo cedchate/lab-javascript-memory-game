@@ -52,30 +52,33 @@ window.addEventListener('load', (event) => {
       if(memoryGame.pickedCards.length < 2 && !card.classList.contains('turned')){
         card.classList.add("turned");
         memoryGame.pickedCards.push(card);
-        scoreClickedElement.innerHTML= 0;
           
         // console.log(`Card clicked: ${card}`);
         
-        if (memoryGame.pickedCards.length===2){
-          scoreClickedElement.innerHTML= 1;
-          if (memoryGame.checkIfPair(memoryGame.pickedCards[0].getAttribute('data-card-name'), memoryGame.pickedCards[1].getAttribute('data-card-name'))){
+          if (memoryGame.pickedCards.length===2){
+            scoreClickedElement.innerHTML= memoryGame.pairsClicked;
+            if (memoryGame.checkIfPair(memoryGame.pickedCards[0].getAttribute('data-card-name'), memoryGame.pickedCards[1].getAttribute('data-card-name'))){
 
-            scoreGuessedElement.innerHTML= memoryGame.pairsGuessed;
-                  
-            memoryGame.pickedCards[0].classList.add('blocked');
-            memoryGame.pickedCards[1].classList.add('blocked');
-            memoryGame.pickedCards.shift();
-            memoryGame.pickedCards.shift();
+              scoreGuessedElement.innerHTML= memoryGame.pairsGuessed;
+                    
+              memoryGame.pickedCards[0].classList.add('blocked');
+              memoryGame.pickedCards[1].classList.add('blocked');
+              memoryGame.pickedCards.shift();
+              memoryGame.pickedCards.shift();
+            }else {
+              setTimeout(()=> {
+                memoryGame.pickedCards[0].classList.remove('turned');
+                memoryGame.pickedCards[1].classList.remove('turned');
+                memoryGame.pickedCards.shift();
+                memoryGame.pickedCards.shift();
+              }, 1000);
+            }
+            scoreClickedElement.innerHTML= memoryGame.pairsClicked;
           }
-        }
-      
-      }else if (card.classList.contains('turned')){
-        card.classList.remove('turned');
-        let indexOfCard= memoryGame.pickedCards.indexOf(card);
-        memoryGame.pickedCards.splice(indexOfCard, 1);
-        scoreClickedElement.innerHTML= 0;
+          
+        
+    
       }
-      
       if(memoryGame.checkIfFinished()){
         scoreGuessedElement.innerHTML= 'You Won!!!!';
         setTimeout(()=> {
@@ -89,10 +92,9 @@ window.addEventListener('load', (event) => {
           memoryGame.pairsGuessed= 0;
           memoryGame.pairsClicked= 0;
           console.log('WIN!!!');
-        }, 2000);
-    
+        }, 3000);
+  
       }
-
     });
 
   });
