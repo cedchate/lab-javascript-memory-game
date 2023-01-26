@@ -26,6 +26,7 @@ const cards = [
 ];
 
 const memoryGame = new MemoryGame(cards);
+memoryGame.shuffleCards();
 
 window.addEventListener('load', (event) => {
   let html = '';
@@ -45,7 +46,55 @@ window.addEventListener('load', (event) => {
   document.querySelectorAll('.card').forEach((card) => {
     card.addEventListener('click', () => {
       // TODO: write some code here
-      console.log(`Card clicked: ${card}`);
+      const scoreClickedElement= document.querySelector('#pairs-clicked');
+      const scoreGuessedElement= document.querySelector('#pairs-guessed');
+
+      if(memoryGame.pickedCards.length < 2 && !card.classList.contains('turned')){
+        card.classList.add("turned");
+        memoryGame.pickedCards.push(card);
+        scoreClickedElement.innerHTML= 0;
+          
+        // console.log(`Card clicked: ${card}`);
+        
+        if (memoryGame.pickedCards.length===2){
+          scoreClickedElement.innerHTML= 1;
+          if (memoryGame.checkIfPair(memoryGame.pickedCards[0].getAttribute('data-card-name'), memoryGame.pickedCards[1].getAttribute('data-card-name'))){
+
+            scoreGuessedElement.innerHTML= memoryGame.pairsGuessed;
+                  
+            memoryGame.pickedCards[0].classList.add('blocked');
+            memoryGame.pickedCards[1].classList.add('blocked');
+            memoryGame.pickedCards.shift();
+            memoryGame.pickedCards.shift();
+          }
+        }
+      
+      }else if (card.classList.contains('turned')){
+        card.classList.remove('turned');
+        let indexOfCard= memoryGame.pickedCards.indexOf(card);
+        memoryGame.pickedCards.splice(indexOfCard, 1);
+        scoreClickedElement.innerHTML= 0;
+      }
+      
+      if(memoryGame.checkIfFinished()){
+        scoreGuessedElement.innerHTML= 'You Won!!!!';
+        setTimeout(()=> {
+          document.querySelectorAll('.turned.blocked').forEach((card) => {
+            card.classList.remove('turned');
+            card.classList.remove('blocked');
+          });
+          scoreClickedElement.innerHTML= 0;
+          scoreGuessedElement.innerHTML= 0;
+          memoryGame.shuffleCards();
+          memoryGame.pairsGuessed= 0;
+          memoryGame.pairsClicked= 0;
+          console.log('WIN!!!');
+        }, 2000);
+    
+      }
+
     });
+
   });
+
 });
